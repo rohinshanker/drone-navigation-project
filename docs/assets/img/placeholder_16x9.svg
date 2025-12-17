@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <rect width="1200" height="675" fill="#f3f4f6"/>
+  <rect x="40" y="40" width="1120" height="595" fill="none" stroke="#9ca3af" stroke-width="6" stroke-dasharray="12 12"/>
+  <text x="600" y="320" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="44" fill="#374151">Placeholder image (16:9)</text>
+  <text x="600" y="380" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#6b7280">Replace with your screenshot / plot / diagram</text>
+</svg>
