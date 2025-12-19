@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Drone Navigation Through Constrained Gate Environments | Team 44</title>
   <meta name="description" content="EECS/ME C106A/206A Final Project (Fall 2025). Team 44 built an autonomous drone pipeline for navigating through constrained gate environments using receding-horizon LQR and ArUco-based vision." />
-  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./assets/css/styles.css" />
 </head>
 
 <body>
@@ -61,7 +61,7 @@
           <div class="hero-actions">
             <a class="btn primary" href="#demo">Watch the demo</a>
             <a class="btn" href="#system">Read the technical breakdown</a>
-            <a class="btn subtle" href="assets/docs/EECS%20C106A%20Final%20Project%20-%20Group%2044%20-%20Google%20Slides.pdf" target="_blank" rel="noreferrer">
+            <a class="btn subtle" href="./assets/docs/EECS%20C106A%20Final%20Project%20-%20Group%2044%20-%20Google%20Slides.pdf" target="_blank" rel="noreferrer">
               View slides (PDF)
             </a>
           </div>
@@ -89,7 +89,7 @@
 
         <div class="hero-media">
           <figure class="media-card">
-            <img class="lightbox" src="assets/img/slides/slide_01.png" alt="Title slide: Drone Navigation Through Constrained Gate Environments" loading="lazy" />
+            <img src="./assets/img/slides/slide_01.png" alt="Title slide: Drone Navigation Through Constrained Gate Environments" loading="lazy" />
             <figcaption>Final presentation cover slide.</figcaption>
           </figure>
         </div>
@@ -112,22 +112,18 @@
         <div class="video-grid">
           <div class="video-card">
             <div class="video-embed" aria-label="Demo video placeholder">
-              <!-- TODO: Replace VIDEO_ID with your upload's ID -->
-              <iframe
-                src="https://www.youtube-nocookie.com/embed/VIDEO_ID"
-                title="Drone gate navigation demo"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-              </iframe>
+              <video controls playsinline preload="metadata" aria-label="Drone gate navigation demo">
+                <source src="./assets/videos/mujocosimulator.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
             <p class="muted small">
-              If you are not using YouTube, you can replace the iframe with a local MP4 file and commit it under <code>assets/videos/</code>.
-              (GitHub has file size limits—YouTube or Google Drive is usually easier.)
+              MuJoCo
             </p>
           </div>
 
           <figure class="media-card">
-            <img class="lightbox" src="assets/img/slides/slide_29.png" alt="Photo of the physical gate setup used for the demo" loading="lazy" />
+            <img src="./assets/img/slides/slide_29.png" alt="Photo of the physical gate setup used for the demo" loading="lazy" />
             <figcaption>Physical gate setup (still frame from demo slide).</figcaption>
           </figure>
         </div>
@@ -135,7 +131,7 @@
         <div class="checklist">
           <h3>Demo checklist (fill these in)</h3>
           <ul>
-            <li><strong>Link(s):</strong> <span class="todo">TODO — paste demo video URL(s)</span></li>
+            <li><strong>Link(s):</strong> <span class="todo">https://drive.google.com/file/d/1hQ1R0BNpyeYMz3jcChAXkvP39Xq2mS2R/view?ts=69459bd9</span></li>
             <li><strong>What the viewer should notice:</strong> <span class="todo">TODO — e.g., detection → planning → movement sequence</span></li>
             <li><strong>Failure modes shown:</strong> <span class="todo">TODO — e.g., tag lost, drift, command discretization</span></li>
           </ul>
@@ -171,7 +167,7 @@
           </div>
 
           <figure class="media-card">
-            <img class="lightbox" src="assets/img/slides/slide_03.png" alt="Slide describing initial goals and pipeline components (perception, localization, trajectory planning)" loading="lazy" />
+            <img src="./assets/img/slides/slide_03.png" alt="Slide describing initial goals and pipeline components (perception, localization, trajectory planning)" loading="lazy" />
             <figcaption>High-level system goals.</figcaption>
           </figure>
         </div>
@@ -208,7 +204,7 @@
           </div>
 
           <figure class="media-card">
-            <img class="lightbox" src="assets/img/slides/slide_15.png" alt="Autonomous pipeline flowchart" loading="lazy" />
+            <img src="./assets/img/slides/slide_15.png" alt="Autonomous pipeline flowchart" loading="lazy" />
             <figcaption>Pipeline block diagram used in our final presentation.</figcaption>
           </figure>
         </div>
@@ -242,7 +238,7 @@
         <details class="details">
           <summary><strong>Appendix:</strong> Experimental conditions &amp; simplifications (from slides)</summary>
           <div class="details-inner">
-            <img class="lightbox" src="assets/img/slides/slide_16.png" alt="Slide listing experimental conditions and simplifications" loading="lazy" />
+            <img src="./assets/img/slides/slide_16.png" alt="Slide listing experimental conditions and simplifications" loading="lazy" />
           </div>
         </details>
       </div>
@@ -278,19 +274,19 @@
           </div>
 
           <figure class="media-card">
-            <img class="lightbox" src="assets/img/slides/slide_04.png" alt="Slide describing why receding-horizon LQR was chosen" loading="lazy" />
+            <img src="./assets/img/slides/slide_04.png" alt="Slide describing why receding-horizon LQR was chosen" loading="lazy" />
             <figcaption>Controller motivation.</figcaption>
           </figure>
         </div>
 
         <div class="gallery">
           <figure class="media-card">
-            <img class="lightbox" src="assets/img/slides/slide_19.png" alt="Simulation optimization results: different horizon lengths" loading="lazy" />
+            <img src="./assets/img/slides/slide_19.png" alt="Simulation optimization results: different horizon lengths" loading="lazy" />
             <figcaption>Horizon length sweep (20/30/60 steps).</figcaption>
           </figure>
 
           <figure class="media-card">
-            <img class="lightbox" src="assets/img/slides/slide_20.png" alt="Simulation optimization results: QRP weights" loading="lazy" />
+            <img src="./assets/img/slides/slide_20.png" alt="Simulation optimization results: QRP weights" loading="lazy" />
             <figcaption>Example Q cost sweeps (position weights).</figcaption>
           </figure>
         </div>
@@ -303,13 +299,13 @@
               <span class="todo">TODO — add a short written explanation of your final state vector, input vector, and assumptions.</span>
             </p>
             <div class="gallery">
-              <img class="lightbox" src="assets/img/slides/slide_06.png" alt="Dynamics slide: forces" loading="lazy" />
-              <img class="lightbox" src="assets/img/slides/slide_07.png" alt="Dynamics slide: linearization and small angle approximations" loading="lazy" />
-              <img class="lightbox" src="assets/img/slides/slide_08.png" alt="Dynamics slide: forces (continued)" loading="lazy" />
-              <img class="lightbox" src="assets/img/slides/slide_09.png" alt="Linearization slide: more small angle approximations" loading="lazy" />
-              <img class="lightbox" src="assets/img/slides/slide_10.png" alt="Fully linearized model slide" loading="lazy" />
-              <img class="lightbox" src="assets/img/slides/slide_11.png" alt="Mixer matrix slide" loading="lazy" />
-              <img class="lightbox" src="assets/img/slides/slide_12.png" alt="LQR optimization slide" loading="lazy" />
+              <img src="./assets/img/slides/slide_06.png" alt="Dynamics slide: forces" loading="lazy" />
+              <img src="./assets/img/slides/slide_07.png" alt="Dynamics slide: linearization and small angle approximations" loading="lazy" />
+              <img src="./assets/img/slides/slide_08.png" alt="Dynamics slide: forces (continued)" loading="lazy" />
+              <img src="./assets/img/slides/slide_09.png" alt="Linearization slide: more small angle approximations" loading="lazy" />
+              <img src="./assets/img/slides/slide_10.png" alt="Fully linearized model slide" loading="lazy" />
+              <img src="./assets/img/slides/slide_11.png" alt="Mixer matrix slide" loading="lazy" />
+              <img src="./assets/img/slides/slide_12.png" alt="LQR optimization slide" loading="lazy" />
             </div>
           </div>
         </details>
@@ -345,7 +341,7 @@
           </div>
 
           <figure class="media-card">
-            <img class="lightbox" src="assets/img/slides/slide_22.png" alt="MuJoCo simulator results screenshot" loading="lazy" />
+            <img src="./assets/img/slides/slide_22.png" alt="MuJoCo simulator results screenshot" loading="lazy" />
             <figcaption>Example simulated environment with tagged gates.</figcaption>
           </figure>
         </div>
@@ -385,7 +381,7 @@
           </div>
 
           <figure class="media-card">
-            <img class="lightbox" src="assets/img/slides/slide_21.png" alt="Diagram showing coordinate frames and transforms for mapping the ArUco tag to world frame" loading="lazy" />
+            <img src="./assets/img/slides/slide_21.png" alt="Diagram showing coordinate frames and transforms for mapping the ArUco tag to world frame" loading="lazy" />
             <figcaption>Frame-transform diagram used for gate localization.</figcaption>
           </figure>
         </div>
@@ -421,12 +417,12 @@
 
           <div class="stack">
             <figure class="media-card">
-              <img class="lightbox" src="assets/img/slides/slide_24.png" alt="Slide about Drone 1 JY08 Pro and Wireshark interception attempt" loading="lazy" />
+              <img src="./assets/img/slides/slide_24.png" alt="Slide about Drone 1 JY08 Pro and Wireshark interception attempt" loading="lazy" />
               <figcaption>Early hardware exploration: command interception did not scale.</figcaption>
             </figure>
 
             <figure class="media-card">
-              <img class="lightbox" src="assets/img/slides/slide_25.png" alt="Slide about DJI Tello SDK limitations and command interface" loading="lazy" />
+              <img src="./assets/img/slides/slide_25.png" alt="Slide about DJI Tello SDK limitations and command interface" loading="lazy" />
               <figcaption>Final platform: DJI Tello SDK control (high-level commands only).</figcaption>
             </figure>
           </div>
@@ -437,15 +433,15 @@
           <div class="details-inner">
             <div class="gallery">
               <figure class="media-card">
-                <img class="lightbox" src="assets/img/slides/slide_26.png" alt="Adapting our controller workaround slide" loading="lazy" />
+                <img src="./assets/img/slides/slide_26.png" alt="Adapting our controller workaround slide" loading="lazy" />
                 <figcaption>Workaround strategy.</figcaption>
               </figure>
               <figure class="media-card">
-                <img class="lightbox" src="assets/img/slides/slide_27.png" alt="Adjusting cost function weights for Tello hardware slide" loading="lazy" />
+                <img src="./assets/img/slides/slide_27.png" alt="Adjusting cost function weights for Tello hardware slide" loading="lazy" />
                 <figcaption>Penalize roll/pitch to favor straight translational motion.</figcaption>
               </figure>
               <figure class="media-card">
-                <img class="lightbox" src="assets/img/slides/slide_28.png" alt="Adjusted hardware QRP weights plot slide" loading="lazy" />
+                <img src="./assets/img/slides/slide_28.png" alt="Adjusted hardware QRP weights plot slide" loading="lazy" />
                 <figcaption>Hardware-oriented Q/R/P tuning (example).</figcaption>
               </figure>
             </div>
@@ -502,7 +498,7 @@
         </div>
 
         <figure class="media-card">
-          <img class="lightbox" src="assets/img/placeholder_16x9.svg" alt="Placeholder for results montage" loading="lazy" />
+          <img src="./assets/img/placeholder_16x9.svg" alt="Placeholder for results montage" loading="lazy" />
           <figcaption><span class="todo">TODO — add a montage: detection overlay + planned path + execution.</span></figcaption>
         </figure>
       </div>
@@ -586,9 +582,9 @@
           <summary>Included PDFs (proposal + checkpoints)</summary>
           <div class="details-inner">
             <ul>
-              <li><a href="assets/docs/_EECS_C106A__Fa25__Final_Project_Proposal%20(1).pdf" target="_blank" rel="noreferrer">Project proposal (PDF)</a></li>
-              <li><a href="assets/docs/Robotics%20Checkpoint%201%20-%20Google%20Docs.pdf" target="_blank" rel="noreferrer">Checkpoint 1 (PDF)</a></li>
-              <li><a href="assets/docs/Robotics%20Project%20Checkpoint%202%20-%20Google%20Docs.pdf" target="_blank" rel="noreferrer">Checkpoint 2 (PDF)</a></li>
+              <li><a href="./assets/docs/_EECS_C106A__Fa25__Final_Project_Proposal%20(1).pdf" target="_blank" rel="noreferrer">Project proposal (PDF)</a></li>
+              <li><a href="./assets/docs/Robotics%20Checkpoint%201%20-%20Google%20Docs.pdf" target="_blank" rel="noreferrer">Checkpoint 1 (PDF)</a></li>
+              <li><a href="./assets/docs/Robotics%20Project%20Checkpoint%202%20-%20Google%20Docs.pdf" target="_blank" rel="noreferrer">Checkpoint 2 (PDF)</a></li>
             </ul>
           </div>
         </details>
@@ -605,11 +601,11 @@
     </footer>
   </main>
 
-  <div id="lightbox" class="lightbox" aria-hidden="true">
+  <div id="lightbox" aria-hidden="true">
     <button id="lightbox-close" class="lightbox-close" aria-label="Close image">×</button>
     <img id="lightbox-img" alt="" />
   </div>
 
-  <script src="assets/js/main.js"></script>
+  <script src="./assets/js/main.js"></script>
 </body>
 </html>
