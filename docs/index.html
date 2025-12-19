@@ -31,10 +31,10 @@
         <a href="#overview">Overview</a>
         <a href="#demo">Demo</a>
         <a href="#system">System</a>
-        <a href="#control">Control</a>
-        <a href="#vision">Vision</a>
         <a href="#hardware">Hardware</a>
-        <a href="#results">Results</a>
+        <a href="#software">Software</a>
+        <a href="#operation">Operation</a>
+        <a href="#vision">Vision</a>
         <a href="#impact">Real-world impact</a>
         <a href="#team">Team</a>
       </nav>
@@ -59,7 +59,7 @@
 
           <div class="hero-actions">
             <a class="btn primary" href="#demo">Watch the demo</a>
-            <a class="btn" href="#system">Read the technical breakdown</a>
+            <a class="btn" href="#system">Overview &amp; Design</a>
             <a class="btn subtle" href="./assets/docs/EECS%20C106A%20Final%20Project%20-%20Group%2044%20-%20Google%20Slides.pdf" target="_blank" rel="noreferrer">
               View slides (PDF)
             </a>
@@ -80,16 +80,14 @@
             </div>
           </div>
 
-          <p class="note">
-            <strong>Project evolution:</strong> We initially applied to an autonomous drone racing research project, but ultimately executed a
-            scoped backup project focused on constrained gate navigation, with all final decisions reflected in our presentation.
-          </p>
         </div>
 
         <div class="hero-media">
-          <figure class="media-card">
-            <img src="./assets/img/slides/slide_01.png" alt="Title slide: Drone Navigation Through Constrained Gate Environments" loading="lazy" />
-            <figcaption>Click "View Slides" to see the full presentation.</figcaption>
+          <figure class="media-card full">
+            <a href="./assets/docs/EECS%20C106A%20Final%20Project%20-%20Group%2044%20-%20Google%20Slides.pdf" target="_blank" rel="noreferrer">
+              <img src="./assets/img/slides/slide_01.png" alt="Title slide: Drone Navigation Through Constrained Gate Environments" loading="lazy" />
+            </a>
+            <figcaption>Click to open the full presentation (PDF).</figcaption>
           </figure>
         </div>
       </div>
@@ -98,9 +96,9 @@
     <!-- ========================= -->
     <!-- DEMO                      -->
     <!-- ========================= -->
-    <section id="demo" class="section">
+    <section id="demo" class="section alt">
       <div class="container">
-        <header class="section-header">
+        <header class="section-header style-a">
           <h2>Demo</h2>
           <p class="muted">
             Video demonstration of our drone flying through the gates we made. 
@@ -116,7 +114,7 @@
               </video>
             </div>
             <p class="muted small">
-              MuJoCo
+              Live demo: DJI Tello flying through gate using onboard FPV camera + ArUco-based perception + receding-horizon LQR control.
             </p>
           </div>
 
@@ -127,42 +125,35 @@
             <figcaption>Click here to open video in new tab.</figcaption>
           </figure>
         </div>
-
-        <div class="checklist">
-          <h3>Demo checklist (fill these in)</h3>
-          <ul>
-            <li><strong>Link(s):</strong> <span class="todo">https://drive.google.com/file/d/1hQ1R0BNpyeYMz3jcChAXkvP39Xq2mS2R/view?ts=69459bd9</span></li>
-            <li><strong>What the viewer should notice:</strong> <span class="todo">TODO — e.g., detection → planning → movement sequence</span></li>
-            <li><strong>Failure modes shown:</strong> <span class="todo">TODO — e.g., tag lost, drift, command discretization</span></li>
-          </ul>
-        </div>
-      </div>
+      
     </section>
 
     <!-- ========================= -->
     <!-- PROBLEM / GOALS           -->
     <!-- ========================= -->
-    <section id="problem" class="section alt">
+    <section id="problem" class="section">
       <div class="container">
-        <header class="section-header">
+        <header class="section-header style-a">
           <h2>Problem statement &amp; goals</h2>
         </header>
 
         <div class="two-col">
           <div>
             <p>
-              Our goal was to develop an autonomous drone capable of finding optimal paths to fly through defined
-              obstacles (gates) using:
+              The goal of this project is to build a modular autonomy pipeline for vision-based drone navigation that uses an 
+              FPV camera and ArUco marker detection to localize a gate and a receding-horizon LQR controller to plan and 
+              execute a trajectory. The system is validated in MuJoCo simulation software and then adapted to be used with a 
+              DJI Tello drone.
             </p>
-            <ul>
-              <li><strong>Optimal control</strong> via LQR (linear-quadratic regulator)</li>
-              <li><strong>Onboard perception</strong> using a single FPV camera</li>
-              <li><strong>Localization + trajectory planning</strong> based on visual inputs and constraints</li>
-            </ul>
-
             <p class="muted">
-              We focused on a constrained “gateway” task: detect a gate, estimate its center pose, and execute a sequence
-              of motions that carries the drone through the gate.
+              This project is interesting because it integrates perception, planning, and control into a complete autonomous 
+              system. Key challenges include reliable monocular visual localization, designing a stable receding-horizon 
+              controller under actuation limits, and transferring the approach from simulation to real hardware.
+
+            </p>
+            <p class="muted">
+              The methods developed are fundamental to autonomous aerial robotics and are applicable to tasks 
+              such as GPS-denied navigation, inspection, search and rescue, indoor logistics, and path planning.
             </p>
           </div>
 
@@ -177,61 +168,53 @@
     <!-- ========================= -->
     <!-- SYSTEM OVERVIEW           -->
     <!-- ========================= -->
-    <section id="system" class="section">
+    <section id="system" class="section alt">
       <div class="container">
-        <header class="section-header">
-          <h2>System overview</h2>
+        <header class="section-header style-a">
+          <h2>System Overview &amp; Design</h2>
           <p class="muted">
-            We structured the project as a modular pipeline to clearly separate sensing, estimation, planning/control, and actuation.
+            How the perception, planning, and control pieces fit together, and the design decisions behind them.
           </p>
         </header>
 
         <div class="two-col">
-          <div>
-            <h3>Autonomous pipeline</h3>
-            <p>
-              At runtime, the drone repeatedly: (1) estimates state, (2) detects the next gate via ArUco tags,
-              (3) computes the gate center position, (4) runs an LQR optimization to reach the center, and
-              (5) executes the resulting controls (propeller thrusts in simulation; translated into SDK commands on Tello).
-            </p>
-
-            <h3>What we assumed</h3>
-            <ul>
-              <li><strong>Simulation:</strong> ground-truth state available for state estimation.</li>
-              <li><strong>Hardware testing:</strong> rely on the DJI Tello SDK's onboard state estimate.</li>
-              <li><strong>Initialization:</strong> takeoff begins where the ArUco tags are in view to bootstrap perception.</li>
-            </ul>
-          </div>
-
-          <figure class="media-card">
-            <img src="./assets/img/slides/slide_15.png" alt="Autonomous pipeline flowchart" loading="lazy" />
-            <figcaption>Pipeline block diagram.</figcaption>
-          </figure>
-        </div>
-
-        <div class="cards-grid">
-          <div class="card">
-            <h3>Experimental environment</h3>
+          <div class="stack">
             <p class="muted">
-              Gateway dimensions: <strong>0.95 × 0.45 m</strong> (area ≈ <strong>0.475 m²</strong>).
+               The system must autonomously detect and localize a gate using onboard vision, plan a trajectory to the target, and execute the motion in a closed loop while remaining stable and responsive. It must operate in real time, be robust to perception noise, and support both simulation and real hardware.
             </p>
-            <p class="muted small">
-              <span class="todo">TODO — add a labeled photo of your physical gate and its marker IDs.</span>
+            <p class="muted">
+               We implemented a modular pipeline consisting of visual perception, planning, and control. An FPV camera detects ArUco markers to estimate the gate pose, which defines a target state. A discrete-time receding-horizon LQR controller computes control actions to reach the target. The design was validated in MuJoCo simulator with propeller-level actuation and adapted to a DJI Tello using SDK-level position and yaw commands.
+            </p>
+            <p class="muted">
+              ArUco markers were chosen for reliable and computationally efficient obstacle localization instead of training a learning-based vision model. This decision was driven by time constraints and the need for consistent, repeatable performance. 
+            </p>
+            <p class="muted">
+              A receding-horizon optimal control approach (MPC/LQR) was selected to provide closed-loop feedback and predictive behavior, rather than using a simple PID controller or open-loop path planning. This choice improves stability and robustness to disturbances and modeling errors, at the cost of increased computational complexity compared to simpler controllers.
+            </p>
+            <p class="muted">
+              The design produces a stable, efficient, and modular system that can run in real time on limited hardware. While marker-based perception restricts operation in unstructured environments, the approach is well-suited for controlled settings and provides a clear path toward more advanced perception and control techniques.  
             </p>
           </div>
 
-          <div class="card">
-            <h3>Repository</h3>
-            <p class="muted">
-              <a href="https://github.com/alexmunicio/mujoco_drone_simulator" target="_blank" rel="noreferrer">mujoco_drone_simulator</a> — MuJoCo drone simulator codebase.
-            </p>
-          </div>
-
-          <div class="card">
-            <h3>Docs</h3>
-            <p class="muted">
-              We included our final slides and checkpoints as downloadable PDFs under <code>assets/docs/</code>.
-            </p>
+          <div class="stack">
+            <figure class="media-card">
+              <img src="./assets/img/slides/slide_15.png" alt="Autonomous pipeline flowchart" loading="lazy" />
+              <figcaption>Pipeline block diagram used in our final presentation.</figcaption>
+            </figure>
+            <div class="card">
+              <h3>Repository</h3>
+              <p class="muted">
+                <a href="https://github.com/alexmunicio/mujoco_drone_simulator" target="_blank" rel="noreferrer">mujoco_drone_simulator</a> — MuJoCo drone simulator codebase.
+              </p>
+            </div>
+            <div class="card">
+              <h3>Key assumptions</h3>
+              <ul class="muted">
+                <li>Simulation: ground-truth state available for state estimation.</li>
+                <li>Hardware testing: rely on the DJI Tello SDK's onboard state estimate.</li>
+                <li>Initialization: takeoff begins where the ArUco tags are in view to bootstrap perception.</li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -245,79 +228,274 @@
     </section>
 
     <!-- ========================= -->
-    <!-- CONTROL                   -->
+    <!-- HARDWARE                  -->
     <!-- ========================= -->
-    <section id="control" class="section alt">
+    <section id="hardware" class="section">
       <div class="container">
-        <header class="section-header">
-          <h2>Dynamics &amp; optimal control</h2>
+        <header class="section-header style-a">
+          <h2>Implementation: Hardware Selection &amp; Integration</h2>
           <p class="muted">
-            We modeled quadrotor dynamics, linearized around small angles, and used a discrete-time receding-horizon LQR controller.
+            We explored two drone platforms. The primary challenge was achieving autonomous control access that matched our controller output.
           </p>
         </header>
 
-        <div class="two-col">
-          <div>
-            <h3>Why receding-horizon LQR?</h3>
-            <ul>
-              <li>Well-documented and fast to compute</li>
-              <li>Lets us shape flight characteristics via cost weights</li>
-              <li>Reactive to changes (re-plan over a rolling horizon)</li>
-              <li>Horizon length trades off compute time vs. reactivity</li>
-            </ul>
-
-            <h3>Tuning in simulation</h3>
-            <p>
-              We explored (a) horizon length and (b) Q/R/P weight settings. Longer horizons typically produced smoother,
-              longer-term behavior but increased compute time.
-            </p>
+        <div class="feature-rows">
+          <div class="feature">
+            <figure class="feature-media">
+              <img src="./assets/img/slides/slide_24.png" alt="Slide about Drone 1 JY08 Pro and Wireshark interception attempt" loading="lazy" />
+            </figure>
+            <div class="feature-body">
+              <h3>Drone 1: JY08 Pro (attempt)</h3>
+              <p>
+                This drone was controlled through Wi-Fi commands sent from a mobile app. We attempted to intercept and replicate command packets
+                (WireShark), and considered sending commands via an Android emulator, but the takeoff sequence could not be reliably emulated.
+              </p>
+            </div>
           </div>
 
-          <figure class="media-card">
-            <img src="./assets/img/slides/slide_04.png" alt="Slide describing why receding-horizon LQR was chosen" loading="lazy" />
-            <figcaption>Controller motivation.</figcaption>
-          </figure>
+          <div class="feature">
+            <figure class="feature-media">
+              <img src="./assets/img/slides/slide_25.png" alt="Slide about DJI Tello SDK limitations and command interface" loading="lazy" />
+            </figure>
+            <div class="feature-body">
+              <h3>Drone 2: DJI Tello (final hardware)</h3>
+              <p>
+                We chose DJI Tello because the official SDK allows autonomous control, but it provides only high-level commands (e.g., “move forward one meter”),
+                not low-level propeller thrust control. We therefore adapted our planner/controller output to the SDK’s command interface.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div class="gallery">
-          <figure class="media-card">
-            <img src="./assets/img/slides/slide_19.png" alt="Simulation optimization results: different horizon lengths" loading="lazy" />
-            <figcaption>Horizon length sweep (20/30/60 steps).</figcaption>
-          </figure>
 
-          <figure class="media-card">
-            <img src="./assets/img/slides/slide_20.png" alt="Simulation optimization results: QRP weights" loading="lazy" />
-            <figcaption>Example Q cost sweeps (position weights).</figcaption>
-          </figure>
+        <div class="stack">
+          <div class="parts-grid">
+            <div class="part-card">
+              <div class="icon-placeholder">📷</div>
+              <div>
+                <h4>Video Camera Stream</h4>
+                <p class="muted">[Add your camera/FPV streaming setup and wiring here.]</p>
+              </div>
+            </div>
+            <div class="part-card">
+              <div class="icon-placeholder">📡</div>
+              <div>
+                <h4>Command Broadcasting</h4>
+                <p class="muted">[Add your networking/command broadcast setup here.]</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <details class="details">
-          <summary><strong>Math appendix:</strong> dynamics derivation, linearization, and mixer matrix</summary>
+          <summary><strong>Adapting the controller to Tello’s SDK</strong></summary>
           <div class="details-inner">
-            <p class="muted small">
-              These slides contain the derivations used for the linear model and the mapping from propeller thrusts to body torques.
-              <span class="todo">TODO — add a short written explanation of your final state vector, input vector, and assumptions.</span>
-            </p>
             <div class="gallery">
-              <img src="./assets/img/slides/slide_06.png" alt="Dynamics slide: forces" loading="lazy" />
-              <img src="./assets/img/slides/slide_07.png" alt="Dynamics slide: linearization and small angle approximations" loading="lazy" />
-              <img src="./assets/img/slides/slide_08.png" alt="Dynamics slide: forces (continued)" loading="lazy" />
-              <img src="./assets/img/slides/slide_09.png" alt="Linearization slide: more small angle approximations" loading="lazy" />
-              <img src="./assets/img/slides/slide_10.png" alt="Fully linearized model slide" loading="lazy" />
-              <img src="./assets/img/slides/slide_11.png" alt="Mixer matrix slide" loading="lazy" />
-              <img src="./assets/img/slides/slide_12.png" alt="LQR optimization slide" loading="lazy" />
+              <figure class="media-card">
+                <img src="./assets/img/slides/slide_26.png" alt="Adapting our controller workaround slide" loading="lazy" />
+                <figcaption>Workaround strategy.</figcaption>
+              </figure>
+              <figure class="media-card">
+                <img src="./assets/img/slides/slide_27.png" alt="Adjusting cost function weights for Tello hardware slide" loading="lazy" />
+                <figcaption>Penalize roll/pitch to favor straight translational motion.</figcaption>
+              </figure>
+              <figure class="media-card">
+                <img src="./assets/img/slides/slide_28.png" alt="Adjusted hardware QRP weights plot slide" loading="lazy" />
+                <figcaption>Hardware-oriented Q/R/P tuning (example).</figcaption>
+              </figure>
             </div>
+
+            <p class="muted small">
+              <span class="todo">TODO — describe your discretization method: how you convert a continuous trajectory into a sequence of Tello commands.</span>
+            </p>
           </div>
         </details>
       </div>
     </section>
 
+
     <!-- ========================= -->
+    <!-- SOFTWARE                 -->
+    <!-- ========================= -->
+
+    <section id="software" class="section gradient">
+      <div class="container">
+        <header class="section-header style-a">
+          <h2>Implementation: Full-Stack Technical Rundown</h2>
+          <p class="muted">Full technical walk through of all the parts and how they fit together.</p>
+        </header>
+
+
+        <div class="tab-card inline" id="hardware-overview-card">
+          <div class="tab-title" style="font-size:22px;">Hardware Overview</div>
+          <div class="tab-panel active">
+            <div class="two-col">
+              <div class="stack">
+                <h3>Hardware</h3>
+                <div class="cards-grid" style="grid-template-columns: repeat(1, 1fr); margin-top: 0;">
+                  <div class="card">
+                    <h3>DJI Tello Drone</h3>
+                    <p>A lightweight quadrotor used as the aerial platform. The drone provided:</p>
+                    <div class="cards-grid" style="grid-template-columns: repeat(2, 1fr); margin-top: 10px;">
+                      <div class="card"><p class="muted">An onboard forward-facing FPV camera</p></div>
+                      <div class="card"><p class="muted">Wireless communication over Wi-Fi</p></div>
+                      <div class="card"><p class="muted">High-level motion commands (translations and yaw)</p></div>
+                      <div class="card"><p class="muted">Internal low-level stabilization (attitude and motor control)</p></div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <h3>Obstacle Course (Rectangular Hoops Made out of PVC Pipes)</h3>
+                    <p class="muted">Each obstacle was a rectangular gate with <strong>ArUco tags mounted on its four corners</strong>, allowing reliable visual detection and geometric pose estimation.</p>
+                  </div>
+                  <div class="card">
+                    <h3>Ground Computer (Laptop)</h3>
+                    <ul class="muted">
+                      <li>Receive the live video stream</li>
+                      <li>Run computer vision and state estimation</li>
+                      <li>Solve the MPC/LQR optimization problem</li>
+                      <li>Send motion commands back to the drone</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="stack">
+                <h3>Software &amp; Libraries</h3>
+                <div class="cards-grid" style="grid-template-columns: 1fr; margin-top: 0;">
+                  <div class="card">
+                    <h3>DJI Tello SDK</h3>
+                    <ul class="muted">
+                      <li>Sending flight commands (<code>takeoff</code>, <code>land</code>, translations, yaw)</li>
+                      <li>Receiving the FPV video stream over Wi-Fi</li>
+                    </ul>
+                  </div>
+                  <div class="card">
+                    <h3>Control Stack</h3>
+                    <ul class="muted">
+                      <li>OpenCV2 for ArUco detection</li>
+                      <li>Casadi Optimization Library</li>
+                      <li>C++ IPOPT optimization algorithm (interior point method)</li>
+                      <li>MPC controller</li>
+                      <li>Custom trajectory post-processing and command generation logic</li>
+                    </ul>
+                  </div>
+                  <div class="card">
+                    <h3>Software Architecture and Implementation Details</h3>
+                    <p class="muted">The software was structured as a <strong>checkpoint-based autonomy pipeline</strong>, where each obstacle (including takeoff and landing) was treated as a discrete goal state.</p>
+                    <p class="muted">The system continuously cycles through the following stages:</p>
+                    <ol class="muted">
+                      <li>State estimation</li>
+                      <li>Checkpoint evaluation</li>
+                      <li>Perception (ArUco detection)</li>
+                      <li>Trajectory planning (MPC/LQR)</li>
+                      <li>Command execution</li>
+                      <li>Transition to the next checkpoint</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-card side" id="software-modules-tabs">
+          <div class="tab-title" style="font-size:22px;">Key Software Modules</div>
+          <div class="tab-inner">
+            <div class="tab-list" role="tablist" aria-label="Software modules tabs">
+              <button type="button" role="tab" aria-selected="true" data-tab="mod-state">State Estimation</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="mod-perception">Perception</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="mod-mpc">MPC / LQR</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="mod-cost">Cost Function</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="mod-trajectory">Trajectory Post-Processing</button>
+            </div>
+            <div class="tab-panel active" id="tab-mod-state" role="tabpanel">
+              <h3>State Estimation</h3>
+              <ul class="muted">
+                <li>Last known commanded motion</li>
+                <li>Camera-based pose estimation relative to the obstacle</li>
+                <li>Relative positioning to detected obstacles</li>
+                <li>Assumptions about motion execution accuracy</li>
+              </ul>
+            </div>
+            <div class="tab-panel" id="tab-mod-perception" role="tabpanel">
+              <h3>Perception: ArUco-Based Obstacle Localization</h3>
+              <p class="muted">The FPV video stream was processed using OpenCV</p>
+              <p class="muted">Steps:</p>
+              <ol class="muted">
+                <li>Detect the four ArUco tags on an obstacle</li>
+                <li>Infer the 3D pose of each tag relative to the camera</li>
+                <li>Compute the <strong>center point of the rectangular gate</strong></li>
+              </ol>
+              <p class="muted">This center point became the <strong>next checkpoint target</strong> for the controller.</p>
+            </div>
+            <div class="tab-panel" id="tab-mod-mpc" role="tabpanel">
+              <h3>Model Predictive Control with Constrained LQR Cost</h3>
+              <p class="muted">Originally in simulation, the controller:</p>
+              <ul class="muted">
+                <li>Output continuous thrust and torque commands</li>
+                <li>Used a <strong>short receding horizon</strong> for real-time control</li>
+              </ul>
+              <h4>Hardware-Driven Modifications (SDK limits)</h4>
+              <ul class="muted">
+                <li>Translational commands ≥ <strong>10 cm</strong></li>
+                <li>Rotational commands ≥ <strong>10°</strong></li>
+                <li>Commands executed slowly with pauses, stabilized onboard</li>
+              </ul>
+              <p class="muted">As a result, the MPC horizon was <strong>lengthened</strong>, allowed more compute time, and issued fewer commands to reduce drift and uncertainty.</p>
+            </div>
+            <div class="tab-panel" id="tab-mod-cost" role="tabpanel">
+              <h3>Cost Function Adjustments</h3>
+              <p class="muted">To ensure feasible real-world flight:</p>
+              <ul class="muted">
+                <li><strong>Roll and pitch states</strong> heavily penalized</li>
+                <li><strong>Torques about x/y</strong> heavily penalized</li>
+              </ul>
+              <p class="muted">Encouraged:</p>
+              <ul class="muted">
+                <li>Straight-line translational motion</li>
+                <li>Yaw-based reorientation</li>
+                <li>Minimal aggressive maneuvering</li>
+              </ul>
+            </div>
+            <div class="tab-panel" id="tab-mod-trajectory" role="tabpanel">
+              <h3>Trajectory Post-Processing</h3>
+              <p class="muted">Instead of directly applying control inputs:</p>
+              <ol class="muted">
+                <li>Compute the optimal MPC trajectory over the horizon</li>
+                <li>Decompose into <strong>three sequential commands</strong>:
+                  <ul>
+                    <li>Vertical translation</li>
+                    <li>Yaw rotation</li>
+                    <li>Forward/backward translation</li>
+                  </ul>
+                </li>
+                <li>Discretize each to satisfy SDK constraints</li>
+                <li>Send commands wirelessly to the drone</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- ========================= -->
+    <!-- OPERATION                  -->
+    <!-- ========================= -->
+    <section id="operation" class="section alt">
+      <div class="container">
+        <header class="section-header style-a">
+          <h2>Complete System Operation</h2>
+          <p class="muted">Step-by-Step Autonomous Pipeline. Hover over nodes for details.</p>
+        </header>
+      </div>
+    </section>
+
     <!-- SIMULATOR                 -->
     <!-- ========================= -->
-    <section id="sim" class="section">
+    <section id="sim" class="section alt">
       <div class="container">
-        <header class="section-header">
+        <header class="section-header style-a">
           <h2>Simulation in MuJoCo</h2>
           <p class="muted">
             We used MuJoCo to iterate quickly on dynamics, controller tuning, and perception assumptions before hardware testing.
@@ -354,9 +532,9 @@
     <!-- ========================= -->
     <!-- VISION                    -->
     <!-- ========================= -->
-    <section id="vision" class="section alt">
+    <section id="vision" class="section">
       <div class="container">
-        <header class="section-header">
+        <header class="section-header style-a">
           <h2>Computer vision &amp; mapping</h2>
           <p class="muted">
             We estimate the gate pose in the world frame from the FPV camera feed using OpenCV ArUco detection + a PnP solver.
@@ -391,117 +569,6 @@
       </div>
     </section>
 
-    <!-- ========================= -->
-    <!-- HARDWARE                  -->
-    <!-- ========================= -->
-    <section id="hardware" class="section">
-      <div class="container">
-        <header class="section-header">
-          <h2>Hardware selection &amp; integration</h2>
-          <p class="muted">
-            We explored two drone platforms. The primary challenge was achieving autonomous control access that matched our controller output.
-          </p>
-        </header>
-
-        <div class="two-col">
-          <div>
-            <h3>Drone 1: JY08 Pro (attempt)</h3>
-            <p>
-              This drone was controlled through Wi-Fi commands sent from a mobile app. We attempted to intercept and replicate command packets
-              (WireShark), and considered sending commands via an Android emulator, but the takeoff sequence could not be reliably emulated.
-            </p>
-
-            <h3>Drone 2: DJI Tello (final hardware)</h3>
-            <p>
-              We chose DJI Tello because the official SDK allows autonomous control, but it provides only high-level commands (e.g., “move forward one meter”),
-              not low-level propeller thrust control. We therefore adapted our planner/controller output to the SDK’s command interface.
-            </p>
-          </div>
-
-          <div class="stack">
-            <figure class="media-card">
-              <img src="./assets/img/slides/slide_24.png" alt="Slide about Drone 1 JY08 Pro and Wireshark interception attempt" loading="lazy" />
-              <figcaption>Early hardware exploration: command interception did not scale.</figcaption>
-            </figure>
-
-            <figure class="media-card">
-              <img src="./assets/img/slides/slide_25.png" alt="Slide about DJI Tello SDK limitations and command interface" loading="lazy" />
-              <figcaption>Final platform: DJI Tello SDK control (high-level commands only).</figcaption>
-            </figure>
-          </div>
-        </div>
-
-        <details class="details">
-          <summary><strong>Adapting the controller to Tello’s SDK</strong></summary>
-          <div class="details-inner">
-            <div class="gallery">
-              <figure class="media-card">
-                <img src="./assets/img/slides/slide_26.png" alt="Adapting our controller workaround slide" loading="lazy" />
-                <figcaption>Workaround strategy.</figcaption>
-              </figure>
-              <figure class="media-card">
-                <img src="./assets/img/slides/slide_27.png" alt="Adjusting cost function weights for Tello hardware slide" loading="lazy" />
-                <figcaption>Penalize roll/pitch to favor straight translational motion.</figcaption>
-              </figure>
-              <figure class="media-card">
-                <img src="./assets/img/slides/slide_28.png" alt="Adjusted hardware QRP weights plot slide" loading="lazy" />
-                <figcaption>Hardware-oriented Q/R/P tuning (example).</figcaption>
-              </figure>
-            </div>
-
-            <p class="muted small">
-              <span class="todo">TODO — describe your discretization method: how you convert a continuous trajectory into a sequence of Tello commands.</span>
-            </p>
-          </div>
-        </details>
-      </div>
-    </section>
-
-    <!-- ========================= -->
-    <!-- RESULTS                   -->
-    <!-- ========================= -->
-    <section id="results" class="section alt">
-      <div class="container">
-        <header class="section-header">
-          <h2>Results</h2>
-          <p class="muted">
-            Use this section to clearly show what worked, what partially worked, and what did not work (and why).
-            This is typically where grading distinguishes a “cool idea” from a “robust implementation”.
-          </p>
-        </header>
-
-        <div class="cards-grid">
-          <div class="card">
-            <h3>Simulation</h3>
-            <ul>
-              <li><span class="todo">TODO — success rate: X/Y runs pass gate in sim</span></li>
-              <li><span class="todo">TODO — average time-to-gate / path length</span></li>
-              <li><span class="todo">TODO — plots: position error vs time, control effort</span></li>
-            </ul>
-          </div>
-
-          <div class="card">
-            <h3>Hardware (DJI Tello)</h3>
-            <ul>
-              <li><span class="todo">TODO — success rate: X/Y trials pass gate</span></li>
-              <li><span class="todo">TODO — qualitative notes: drift, latency, command saturation</span></li>
-              <li><span class="todo">TODO — include a short “best run” clip + a “typical run” clip</span></li>
-            </ul>
-          </div>
-
-          <div class="card">
-            <h3>Key limitations</h3>
-            <ul>
-              <li>Reliance on ArUco tags (not general “gate recognition”)</li>
-              <li>Initialization assumes tags visible at takeoff</li>
-              <li>Tello SDK exposes position/yaw commands only (no thrust-level control)</li>
-              <li><span class="todo">TODO — add your top 1–2 observed failure modes</span></li>
-            </ul>
-          </div>
-        </div>
-
-        <figure class="media-card">
-          <img src="./assets/img/placeholder_16x9.svg" alt="Placeholder for results montage" loading="lazy" />
           <figcaption><span class="todo">TODO — add a montage: detection overlay + planned path + execution.</span></figcaption>
         </figure>
       </div>
@@ -512,7 +579,7 @@
     <!-- ========================= -->
     <section id="impact" class="section">
       <div class="container">
-        <header class="section-header">
+        <header class="section-header style-a">
           <h2>Real-world extensions &amp; societal impact</h2>
           <p class="muted">
             The course asks for a section describing how your project could extend to the real world and what implications the technology might have in society.
@@ -555,7 +622,7 @@
     <!-- ========================= -->
     <section id="team" class="section alt">
       <div class="container">
-        <header class="section-header">
+        <header class="section-header style-a">
           <h2>Team</h2>
           <p class="muted">
             Alejandro Municio · Ben Finch · Michael Howo · Rohin Shanker
@@ -565,19 +632,19 @@
         <div class="cards-grid">
           <div class="card">
             <h3>Alejandro Municio</h3>
-            <p class="muted"><a href="https://www.linkedin.com/in/alejandro-municio-aerospace/" target="_blank" rel="noreferrer">LinkedIn</a></p>
+            <p class="muted"><a href="https://www.linkedin.com/in/alejandro-municio-aerospace/" target="_blank" rel="noreferrer"><svg class="icon-linkedin" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M100.28 448H7.4V148.9h92.88zm-46.44-339C24 109 0 85 0 54.9A54.9 54.9 0 0 1 54.13 0a54.88 54.88 0 1 1-.29 109zm394.16 339h-92.68V302.4c0-34.7-12.45-58.4-43.55-58.4-23.74 0-37.88 16-44.1 31.4-2.26 5.5-2.82 13.1-2.82 20.8V448h-92.78s1.22-251.1 0-277.1h92.78v39.3c-.18.3-.43.6-.6.9h.6v-.9c12.34-19 34.35-46.1 83.6-46.1 61 0 106.68 39.9 106.68 125.5z"/></svg>LinkedIn</a></p>
           </div>
           <div class="card">
             <h3>Ben Finch</h3>
-            <p class="muted"><a href="https://www.linkedin.com/in/ben--finch/" target="_blank" rel="noreferrer">LinkedIn</a></p>
+            <p class="muted"><a href="https://www.linkedin.com/in/ben--finch/" target="_blank" rel="noreferrer"><svg class="icon-linkedin" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M100.28 448H7.4V148.9h92.88zm-46.44-339C24 109 0 85 0 54.9A54.9 54.9 0 0 1 54.13 0a54.88 54.88 0 1 1-.29 109zm394.16 339h-92.68V302.4c0-34.7-12.45-58.4-43.55-58.4-23.74 0-37.88 16-44.1 31.4-2.26 5.5-2.82 13.1-2.82 20.8V448h-92.78s1.22-251.1 0-277.1h92.78v39.3c-.18.3-.43.6-.6.9h.6v-.9c12.34-19 34.35-46.1 83.6-46.1 61 0 106.68 39.9 106.68 125.5z"/></svg>LinkedIn</a></p>
           </div>
           <div class="card">
             <h3>Michael Howo</h3>
-            <p class="muted"><a href="https://www.linkedin.com/in/michaelhowo/" target="_blank" rel="noreferrer">LinkedIn</a></p>
+            <p class="muted"><a href="https://www.linkedin.com/in/michaelhowo/" target="_blank" rel="noreferrer"><svg class="icon-linkedin" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M100.28 448H7.4V148.9h92.88zm-46.44-339C24 109 0 85 0 54.9A54.9 54.9 0 0 1 54.13 0a54.88 54.88 0 1 1-.29 109zm394.16 339h-92.68V302.4c0-34.7-12.45-58.4-43.55-58.4-23.74 0-37.88 16-44.1 31.4-2.26 5.5-2.82 13.1-2.82 20.8V448h-92.78s1.22-251.1 0-277.1h92.78v39.3c-.18.3-.43.6-.6.9h.6v-.9c12.34-19 34.35-46.1 83.6-46.1 61 0 106.68 39.9 106.68 125.5z"/></svg>LinkedIn</a></p>
           </div>
           <div class="card">
             <h3>Rohin Shanker</h3>
-            <p class="muted"><a href="https://www.linkedin.com/in/rohin-shanker/" target="_blank" rel="noreferrer">LinkedIn</a></p>
+            <p class="muted"><a href="https://www.linkedin.com/in/rohin-shanker/" target="_blank" rel="noreferrer"><svg class="icon-linkedin" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><path d="M100.28 448H7.4V148.9h92.88zm-46.44-339C24 109 0 85 0 54.9A54.9 54.9 0 0 1 54.13 0a54.88 54.88 0 1 1-.29 109zm394.16 339h-92.68V302.4c0-34.7-12.45-58.4-43.55-58.4-23.74 0-37.88 16-44.1 31.4-2.26 5.5-2.82 13.1-2.82 20.8V448h-92.78s1.22-251.1 0-277.1h92.78v39.3c-.18.3-.43.6-.6.9h.6v-.9c12.34-19 34.35-46.1 83.6-46.1 61 0 106.68 39.9 106.68 125.5z"/></svg>LinkedIn</a></p>
           </div>
         </div>
 
@@ -588,7 +655,7 @@
     <footer class="site-footer">
       <div class="container footer-inner">
         <p class="muted small">
-          © Team 44 · EECS/ME C106A/206A (Fall 2025).
+          Team 44 · EECS/ME C106A/206A (Fall 2025).
         </p>
         <a class="back-to-top" href="#top">Back to top</a>
       </div>

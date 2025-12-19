@@ -99,4 +99,33 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeLightbox();
   });
+
+  // ----------------------------
+  // Simple tabs (data-tab)
+  // ----------------------------
+  document.querySelectorAll(".tab-card").forEach((card) => {
+    const buttons = Array.from(card.querySelectorAll(".tab-list button"));
+    const panels = Array.from(card.querySelectorAll(".tab-panel"));
+    const byId = new Map(panels.map((p) => [p.id.replace("tab-", ""), p]));
+
+    // If no buttons (static card), show all panels or keep active default
+    if (buttons.length === 0) {
+      panels.forEach((p, idx) => {
+        if (idx === 0) p.classList.add("active");
+      });
+      return;
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.tab;
+        if (!key) return;
+        buttons.forEach((b) => b.setAttribute("aria-selected", "false"));
+        panels.forEach((p) => p.classList.remove("active"));
+        btn.setAttribute("aria-selected", "true");
+        const panel = byId.get(key);
+        if (panel) panel.classList.add("active");
+      });
+    });
+  });
 })();
