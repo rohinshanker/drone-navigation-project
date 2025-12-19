@@ -10,7 +10,6 @@
 </head>
 
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header" id="top">
     <div class="container header-inner">
@@ -90,7 +89,7 @@
         <div class="hero-media">
           <figure class="media-card">
             <img src="./assets/img/slides/slide_01.png" alt="Title slide: Drone Navigation Through Constrained Gate Environments" loading="lazy" />
-            <figcaption>Final presentation cover slide.</figcaption>
+            <figcaption>Click "View Slides" to see the full presentation.</figcaption>
           </figure>
         </div>
       </div>
@@ -104,8 +103,7 @@
         <header class="section-header">
           <h2>Demo</h2>
           <p class="muted">
-            Replace the placeholder embed below with your final demo link(s) (YouTube/Drive/etc). The course report
-            requires a link to the video(s) of your functional system.
+            Video demonstration of our drone flying through the gates we made. 
           </p>
         </header>
 
@@ -113,7 +111,7 @@
           <div class="video-card">
             <div class="video-embed" aria-label="Demo video placeholder">
               <video controls playsinline preload="metadata" aria-label="Drone gate navigation demo">
-                <source src="./assets/videos/mujocosimulator.mp4" type="video/mp4" />
+                <source src="./assets/videos/livedemo.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -123,8 +121,10 @@
           </div>
 
           <figure class="media-card">
-            <img src="./assets/img/slides/slide_29.png" alt="Photo of the physical gate setup used for the demo" loading="lazy" />
-            <figcaption>Physical gate setup (still frame from demo slide).</figcaption>
+            <a href="./assets/videos/livedemo.mp4" target="_blank" rel="noreferrer">
+              <img src="./assets/img/slides/slide_29.png" alt="Photo of the physical gate setup used for the demo" loading="lazy" />
+            </a>
+            <figcaption>Click here to open video in new tab.</figcaption>
           </figure>
         </div>
 
@@ -205,7 +205,7 @@
 
           <figure class="media-card">
             <img src="./assets/img/slides/slide_15.png" alt="Autonomous pipeline flowchart" loading="lazy" />
-            <figcaption>Pipeline block diagram used in our final presentation.</figcaption>
+            <figcaption>Pipeline block diagram.</figcaption>
           </figure>
         </div>
 
@@ -223,7 +223,7 @@
           <div class="card">
             <h3>Repository</h3>
             <p class="muted">
-              <span class="todo">TODO — add a link to the code repo, and short instructions for running simulation + hardware.</span>
+              <a href="https://github.com/alexmunicio/mujoco_drone_simulator" target="_blank" rel="noreferrer">mujoco_drone_simulator</a> — MuJoCo drone simulator codebase.
             </p>
           </div>
 
@@ -341,8 +341,11 @@
           </div>
 
           <figure class="media-card">
-            <img src="./assets/img/slides/slide_22.png" alt="MuJoCo simulator results screenshot" loading="lazy" />
-            <figcaption>Example simulated environment with tagged gates.</figcaption>
+            <video controls playsinline preload="metadata">
+              <source src="./assets/videos/mujocosimulator.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <figcaption>MuJoCo simulator run (gates with ArUco tags).</figcaption>
           </figure>
         </div>
       </div>
@@ -562,39 +565,30 @@
         <div class="cards-grid">
           <div class="card">
             <h3>Alejandro Municio</h3>
-            <p class="muted"><span class="todo">TODO — contributions (e.g., dynamics derivation, LQR tuning, integration)</span></p>
+            <p class="muted"><a href="https://www.linkedin.com/in/alejandro-municio-aerospace/" target="_blank" rel="noreferrer">LinkedIn</a></p>
           </div>
           <div class="card">
             <h3>Ben Finch</h3>
-            <p class="muted"><span class="todo">TODO — contributions</span></p>
+            <p class="muted"><a href="https://www.linkedin.com/in/ben--finch/" target="_blank" rel="noreferrer">LinkedIn</a></p>
           </div>
           <div class="card">
             <h3>Michael Howo</h3>
-            <p class="muted"><span class="todo">TODO — contributions</span></p>
+            <p class="muted"><a href="https://www.linkedin.com/in/michaelhowo/" target="_blank" rel="noreferrer">LinkedIn</a></p>
           </div>
           <div class="card">
             <h3>Rohin Shanker</h3>
-            <p class="muted"><span class="todo">TODO — contributions</span></p>
+            <p class="muted"><a href="https://www.linkedin.com/in/rohin-shanker/" target="_blank" rel="noreferrer">LinkedIn</a></p>
           </div>
         </div>
 
-        <details class="details">
-          <summary>Included PDFs (proposal + checkpoints)</summary>
-          <div class="details-inner">
-            <ul>
-              <li><a href="./assets/docs/_EECS_C106A__Fa25__Final_Project_Proposal%20(1).pdf" target="_blank" rel="noreferrer">Project proposal (PDF)</a></li>
-              <li><a href="./assets/docs/Robotics%20Checkpoint%201%20-%20Google%20Docs.pdf" target="_blank" rel="noreferrer">Checkpoint 1 (PDF)</a></li>
-              <li><a href="./assets/docs/Robotics%20Project%20Checkpoint%202%20-%20Google%20Docs.pdf" target="_blank" rel="noreferrer">Checkpoint 2 (PDF)</a></li>
-            </ul>
-          </div>
-        </details>
+        
       </div>
     </section>
 
     <footer class="site-footer">
       <div class="container footer-inner">
         <p class="muted small">
-          © Team 44 · EECS/ME C106A/206A (Fall 2025). Website template generated for iteration.
+          © Team 44 · EECS/ME C106A/206A (Fall 2025).
         </p>
         <a class="back-to-top" href="#top">Back to top</a>
       </div>
