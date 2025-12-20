@@ -200,6 +200,9 @@ img{ max-width: 100%; display: block; }
 .section-header{
   margin-bottom: 24px;
 }
+.section-header.tight{
+  margin-bottom: 8px;
+}
 .section-header h2{
   margin: 0 0 8px 0;
   font-size: 32px;
@@ -686,6 +689,13 @@ img{ max-width: 100%; display: block; }
    ============================== */
 .muted{ color: var(--muted); }
 .small{ font-size: 13px; }
+.summary-text{
+  max-width: 87.5%;
+  margin-top: 0;
+}
+.conclusion-title{
+  margin-top: 18px;
+}
 .todo{
   color: var(--accent);
   font-weight: 650;

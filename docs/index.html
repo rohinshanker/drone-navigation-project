@@ -437,14 +437,22 @@
               <div class="icon-placeholder">📷</div>
               <div>
                 <h4>Video Camera Stream</h4>
-                <p class="muted">[Add your camera/FPV streaming setup and wiring here.]</p>
+                <ul class="muted">
+                  <li>Laptop connects to the Tello’s 2.4 GHz 802.11n Wi-Fi AP</li>
+                  <li>Enable video with <code>streamon</code></li>
+                  <li>Receive the H.264 video stream over UDP (port 11111) and decode frames for vision (e.g., ArUco detection)</li>
+                </ul>
               </div>
             </div>
             <div class="part-card">
               <div class="icon-placeholder">📡</div>
               <div>
                 <h4>Command Broadcasting</h4>
-                <p class="muted">[Add your networking/command broadcast setup here.]</p>
+                <ul class="muted">
+                  <li>Send text-based SDK commands over UDP to 192.168.10.1:8889</li>
+                  <li>Start with <code>command</code> to enter SDK mode</li>
+                  <li>Drone replies with ok / error (<a href="https://dl-cdn.ryzerobotics.com/downloads/tello/20180910/Tello%20SDK%20Documentation%20EN_1.3.pdf" target="_blank" rel="noopener noreferrer">SDK Documentation</a>)</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -680,11 +688,11 @@
     <!-- ========================= -->
     <section id="discussion" class="section">
       <div class="container">
-        <header class="section-header style-a">
+        <header class="section-header style-a tight">
           <h2>Summary</h2>
         </header>
 
-        <p class="muted">This project demonstrates how <strong>advanced optimal control techniques</strong> (MPC with LQR cost) can be successfully adapted to <strong>real-world hardware constraints</strong>. By restructuring the controller to output long-horizon trajectories and discrete high-level commands, the system achieved reliable autonomous flight through a sequence of obstacles despite limited sensing, actuation, and telemetry.</p>
+        <p class="muted summary-text">This project demonstrates how <strong>advanced optimal control techniques</strong> (MPC with LQR cost) can be successfully adapted to <strong>real-world hardware constraints</strong>. By restructuring the controller to output long-horizon trajectories and discrete high-level commands, the system achieved reliable autonomous flight through a sequence of obstacles despite limited sensing, actuation, and telemetry.</p>
         
         <p class="muted"><strong>Results & Live Drone Demo</strong></p>
 
@@ -701,11 +709,11 @@
             </p>
           </div>
         </div>
-        <p class="muted"><strong>Conclusion</strong></p>
+        <p class="muted summary-text conclusion-title"><strong>Conclusion</strong></p>
         <div class="stack">
-          <p class="muted"><strong>(a) Results and Design Criteria</strong> The final system met the primary design criteria by achieving fully autonomous operation, including takeoff, gate detection, trajectory planning, gate traversal, and landing. The modular pipeline operated in real time and performed reliably in both simulation and on hardware, demonstrating stable closed-loop control and successful perception-to-control integration.</p>
-          <p class="muted"><strong>(b) Difficulties Encountered</strong> A major challenge arose during the transition from simulation to hardware. While the MuJoCo simulation was designed around low-level propeller thrust control, the DJI Tello does not provide access to individual propeller commands through its SDK. This mismatch required a significant redesign of the control interface late in the project.</p>
-          <p class="muted"><strong>(c) Flaws, Hacks, and Future Improvements</strong> To address this limitation, the controller was adapted to operate using the Tello SDK’s high-level position and yaw commands rather than direct motor inputs. While effective, this workaround reduced control authority and strayed from the optimal trajectory. With additional time, a drone platform offering low-level actuation access would be used to fully leverage the original control design. Additionally, replacing ArUco-based perception with a learned vision model would improve robustness and generality when operating with new or unstructured obstacles.</p>
+          <p class="muted summary-text"><strong>(a) Results and Design Criteria</strong> The final system met the primary design criteria by achieving fully autonomous operation, including takeoff, gate detection, trajectory planning, gate traversal, and landing. The modular pipeline operated in real time and performed reliably in both simulation and on hardware, demonstrating stable closed-loop control and successful perception-to-control integration.</p>
+          <p class="muted summary-text"><strong>(b) Difficulties Encountered</strong> A major challenge arose during the transition from simulation to hardware. While the MuJoCo simulation was designed around low-level propeller thrust control, the DJI Tello does not provide access to individual propeller commands through its SDK. This mismatch required a significant redesign of the control interface late in the project.</p>
+          <p class="muted summary-text"><strong>(c) Flaws, Hacks, and Future Improvements</strong> To address this limitation, the controller was adapted to operate using the Tello SDK’s high-level position and yaw commands rather than direct motor inputs. While effective, this workaround reduced control authority and strayed from the optimal trajectory. With additional time, a drone platform offering low-level actuation access would be used to fully leverage the original control design. Additionally, replacing ArUco-based perception with a learned vision model would improve robustness and generality when operating with new or unstructured obstacles.</p>
         </div>
       </div>
     </section>
