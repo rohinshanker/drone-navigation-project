@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Complete System Operation | Pipeline Flowchart</title>
+  <style>
+    :root{
+      --bg: #0f1216;
+      --bg-soft: #141922;
+      --panel: #10151c;
+      --panel-2: #171e29;
+      --text: #eef2f7;
+      --muted: #a7b0bf;
+      --border: rgba(255,255,255,0.12);
+      --accent: #58a6ff;
+      --accent-2: #2bd4c5;
+      --glow: rgba(88,166,255,0.35);
+      --shadow: rgba(0,0,0,0.35);
+    }
+    *{ box-sizing: border-box; }
+    body{
+      margin: 0;
+      font-family: "Sora", "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(1100px 600px at 20% 10%, rgba(88,166,255,0.12), transparent 60%),
+                  radial-gradient(900px 500px at 90% 20%, rgba(43,212,197,0.12), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 40px 16px 60px;
+    }
+    h1{
+      margin: 0 0 6px 0;
+      font-size: clamp(28px, 4vw, 42px);
+      letter-spacing: -0.02em;
+    }
+    .subtitle{
+      margin: 0 0 26px 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .wrapper{
+      width: min(1200px, 100%);
+    }
+
+    .flowchart{
+      position: relative;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 30px 60px var(--shadow);
+      overflow: hidden;
+    }
+
+    .nodes{
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-rows: auto auto;
+      gap: 18px;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    .node{
+      appearance: none;
+      border: 1px solid var(--border);
+      background: linear-gradient(140deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      color: var(--text);
+      padding: 14px 12px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: 0.01em;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+      position: relative;
+    }
+    .node span{
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 6px;
+    }
+    .node:hover,
+    .node:focus-visible,
+    .node.active{
+      transform: translateY(-2px);
+      border-color: rgba(88,166,255,0.6);
+      box-shadow: 0 10px 28px var(--shadow), 0 0 0 6px rgba(88,166,255,0.08), 0 0 30px var(--glow);
+      background: linear-gradient(140deg, rgba(88,166,255,0.14), rgba(255,255,255,0.02));
+      outline: none;
+    }
+    .node:focus-visible{
+      box-shadow: 0 0 0 3px rgba(88,166,255,0.8), 0 0 30px var(--glow);
+    }
+
+    .node[data-step="7"]{
+      grid-column: 5 / span 2;
+      grid-row: 2;
+      justify-self: end;
+    }
+
+    .connections{
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .connections path{
+      stroke: rgba(255,255,255,0.35);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .popup{
+      position: absolute;
+      max-width: 360px;
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 26px 60px rgba(0,0,0,0.5);
+      z-index: 5;
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    .popup.visible{
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .popup .header{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .badge{
+      background: #0a66c2;
+      color: #fff;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .popup h3{
+      margin: 0;
+      font-size: 16px;
+    }
+    .popup ol,
+    .popup ul{
+      margin: 8px 0 0 18px;
+      padding: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .popup li{ margin-bottom: 6px; }
+    .popup code{
+      background: rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: 1px 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9em;
+      color: var(--text);
+    }
+
+    @media (max-width: 980px){
+      .nodes{
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: auto auto auto;
+      }
+      .node[data-step="7"]{
+        grid-column: 2 / span 2;
+        justify-self: center;
+      }
+    }
+    @media (max-width: 700px){
+      .nodes{
+        grid-template-columns: 1fr 1fr;
+      }
+      .node{
+        font-size: 13px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Complete System Operation</h1>
+    <p class="subtitle">Step-by-Step Autonomous Pipeline. Hover over nodes for details.</p>
+
+    <div class="flowchart" id="flowchart">
+      <svg class="connections" id="connections" aria-hidden="true">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,255,255,0.45)" />
+          </marker>
+        </defs>
+      </svg>
+
+      <div class="nodes" id="nodes">
+        <button class="node" data-step="1"><strong>1. Takeoff</strong><span>Init</span></button>
+        <button class="node" data-step="2"><strong>2. Checkpoint 1</strong><span>Obstacle 1</span></button>
+        <button class="node" data-step="3"><strong>3. Planning</strong><span>MPC / LQR</span></button>
+        <button class="node" data-step="4"><strong>4. Execution</strong><span>Commands</span></button>
+        <button class="node" data-step="5"><strong>5. Completion</strong><span>Checkpoint</span></button>
+        <button class="node" data-step="6"><strong>6. Repeat</strong><span>Cycle</span></button>
+        <button class="node" data-step="7"><strong>7. Landing</strong><span>Final</span></button>
+      </div>
+
+      <div class="popup" id="popup" role="tooltip" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <script>
+    const steps = [
+      {
+        id: 1,
+        title: "Takeoff and Initialization",
+        listType: "ol",
+        items: [
+          "The drone receives the SDK `takeoff` command",
+          "It ascends to a preset altitude",
+          { text: "This altitude was chosen to ensure:", subitems: ["Clear line-of-sight", "Reliable detection of the first obstacle"], subListType: "ul" }
+        ]
+      },
+      {
+        id: 2,
+        title: "First Checkpoint – Obstacle 1",
+        listType: "ol",
+        items: [
+          "The drone streams camera data to the ground computer",
+          "ArUco tags on Obstacle 1 are detected",
+          "The obstacle’s center point is estimated",
+          "This center becomes the **current checkpoint**"
+        ]
+      },
+      {
+        id: 3,
+        title: "Trajectory Planning",
+        listType: "ol",
+        items: [
+          "The MPC controller computes an optimal trajectory",
+          { text: "A long receding horizon is used to:", subitems: ["Reduce the number of corrective actions", "Minimize accumulated position error"], subListType: "ul" },
+          "The trajectory is optimized using a constrained LQR cost"
+        ]
+      },
+      {
+        id: 4,
+        title: "Command Execution",
+        listType: "ol",
+        items: [
+          { text: "The trajectory is converted into:", subitems: ["Vertical motion", "Yaw rotation", "Forward/backward motion"], subListType: "ul" },
+          "Commands are sent via the SDK",
+          "The drone executes them with internal stabilization"
+        ]
+      },
+      {
+        id: 5,
+        title: "Checkpoint Completion",
+        listType: "ul",
+        items: [
+          { text: "Once the drone is within a predefined distance of the obstacle center:", subitems: ["The checkpoint is marked as complete", "The next obstacle becomes the active target"], subListType: "ul" }
+        ]
+      },
+      {
+        id: 6,
+        title: "Repeating the Cycle",
+        listType: "ul",
+        items: [
+          { text: "Steps 2–5 repeat for:", subitems: ["Obstacle 2", "Obstacle 3", "…", "Final obstacle"], subListType: "ul" },
+          "ArUco tags for upcoming obstacles are often detected **mid-flight**, reducing transition delay"
+        ]
+      },
+      {
+        id: 7,
+        title: "Final Landing Sequence",
+        listType: "ol",
+        items: [
+          { text: "After clearing the final obstacle:", subitems: ["The system switches to the landing checkpoint"], subListType: "ul" },
+          "The SDK `land` command is issued",
+          "The mission ends"
+        ]
+      }
+    ];
+
+    const flowchart = document.getElementById("flowchart");
+    const popup = document.getElementById("popup");
+    const nodes = Array.from(document.querySelectorAll(".node"));
+    let activeId = null;
+    let hideTimeout = null;
+
+    function parseInline(text){
+      return text
+        .replace(/`([^`]+)`/g, "<code>$1</code>")
+        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    }
+
+    function renderList(listType, items){
+      const list = document.createElement(listType);
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        if (typeof item === "string") {
+          li.innerHTML = parseInline(item);
+        } else {
+          li.innerHTML = parseInline(item.text);
+          if (item.subitems && item.subitems.length) {
+            const sub = document.createElement(item.subListType || "ul");
+            item.subitems.forEach((subitem) => {
+              const subLi = document.createElement("li");
+              subLi.innerHTML = parseInline(subitem);
+              sub.appendChild(subLi);
+            });
+            li.appendChild(sub);
+          }
+        }
+        list.appendChild(li);
+      });
+      return list;
+    }
+
+    function showPopup(stepId, trigger){
+      const step = steps.find((s) => s.id === stepId);
+      if (!step) return;
+      activeId = stepId;
+      nodes.forEach((n) => n.classList.toggle("active", Number(n.dataset.step) === stepId));
+
+      popup.innerHTML = "";
+      const header = document.createElement("div");
+      header.className = "header";
+      header.innerHTML = `<span class="badge">Step ${step.id}</span><h3>${step.title}</h3>`;
+      popup.appendChild(header);
+      popup.appendChild(renderList(step.listType, step.items));
+      popup.setAttribute("aria-hidden", "false");
+      popup.classList.add("visible");
+
+      positionPopup(trigger);
+      trigger.setAttribute("aria-describedby", "popup");
+    }
+
+    function hidePopup(){
+      activeId = null;
+      popup.classList.remove("visible");
+      popup.setAttribute("aria-hidden", "true");
+      nodes.forEach((n) => n.classList.remove("active"));
+      nodes.forEach((n) => n.removeAttribute("aria-describedby"));
+    }
+
+    function scheduleHide(){
+      clearTimeout(hideTimeout);
+      hideTimeout = setTimeout(() => {
+        if (!popup.matches(":hover") && !nodes.some((n) => n.matches(":hover"))) {
+          hidePopup();
+        }
+      }, 120);
+    }
+
+    function positionPopup(trigger){
+      const containerRect = flowchart.getBoundingClientRect();
+      const triggerRect = trigger.getBoundingClientRect();
+      const popupRect = popup.getBoundingClientRect();
+
+      let x = triggerRect.right - containerRect.left + 12;
+      let y = triggerRect.top - containerRect.top + (triggerRect.height / 2) - (popupRect.height / 2);
+
+      const margin = 12;
+      if (x + popupRect.width > containerRect.width - margin) {
+        x = triggerRect.left - containerRect.left - popupRect.width - 12;
+      }
+      if (x < margin) x = margin;
+      if (y < margin) y = margin;
+      if (y + popupRect.height > containerRect.height - margin) {
+        y = containerRect.height - popupRect.height - margin;
+      }
+
+      popup.style.left = `${x}px`;
+      popup.style.top = `${y}px`;
+    }
+
+    nodes.forEach((node) => {
+      const stepId = Number(node.dataset.step);
+      node.addEventListener("pointerenter", () => {
+        clearTimeout(hideTimeout);
+        showPopup(stepId, node);
+      });
+      node.addEventListener("pointerleave", scheduleHide);
+      node.addEventListener("focus", () => showPopup(stepId, node));
+      node.addEventListener("blur", scheduleHide);
+      node.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (activeId === stepId) {
+          hidePopup();
+        } else {
+          showPopup(stepId, node);
+        }
+      });
+      node.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          node.click();
+        }
+      });
+    });
+
+    popup.addEventListener("pointerenter", () => clearTimeout(hideTimeout));
+    popup.addEventListener("pointerleave", scheduleHide);
+
+    document.addEventListener("click", (e) => {
+      if (!popup.contains(e.target)) hidePopup();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") hidePopup();
+    });
+
+    const connections = document.getElementById("connections");
+
+    function nodeCenter(node){
+      const rect = node.getBoundingClientRect();
+      const containerRect = flowchart.getBoundingClientRect();
+      return {
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: rect.top - containerRect.top + rect.height / 2,
+        right: rect.right - containerRect.left,
+        left: rect.left - containerRect.left,
+        top: rect.top - containerRect.top,
+        bottom: rect.bottom - containerRect.top,
+        width: rect.width,
+        height: rect.height
+      };
+    }
+
+    function pathBetween(a, b){
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const c1x = a.x + dx * 0.35;
+      const c1y = a.y;
+      const c2x = a.x + dx * 0.65;
+      const c2y = b.y;
+      return `M ${a.x} ${a.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${b.x} ${b.y}`;
+    }
+
+    function drawConnections(){
+      const containerRect = flowchart.getBoundingClientRect();
+      connections.setAttribute("viewBox", `0 0 ${containerRect.width} ${containerRect.height}`);
+      connections.innerHTML = '<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,255,255,0.45)" /></marker></defs>';
+
+      const get = (id) => nodeCenter(nodes[id - 1]);
+      const step1 = get(1);
+      const step2 = get(2);
+      const step3 = get(3);
+      const step4 = get(4);
+      const step5 = get(5);
+      const step6 = get(6);
+      const step7 = get(7);
+
+      const paths = [];
+      paths.push(pathBetween({ x: step1.right, y: step1.y }, { x: step2.left, y: step2.y }));
+      paths.push(pathBetween({ x: step2.right, y: step2.y }, { x: step3.left, y: step3.y }));
+      paths.push(pathBetween({ x: step3.right, y: step3.y }, { x: step4.left, y: step4.y }));
+      paths.push(pathBetween({ x: step4.right, y: step4.y }, { x: step5.left, y: step5.y }));
+      paths.push(pathBetween({ x: step5.right, y: step5.y }, { x: step6.left, y: step6.y }));
+      paths.push(pathBetween({ x: step6.x, y: step6.bottom }, { x: step7.x, y: step7.top }));
+
+      const loopStart = { x: step6.right, y: step6.y };
+      const loopEnd = { x: step2.top + step2.width / 2, y: step2.top - 10 };
+      const loopPath = `M ${loopStart.x} ${loopStart.y}
+        C ${loopStart.x + 120} ${loopStart.y - 80}, ${loopEnd.x + 120} ${loopEnd.y - 80}, ${loopEnd.x} ${loopEnd.y}`;
+      paths.push(loopPath);
+
+      paths.forEach((d) => {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", d);
+        path.setAttribute("marker-end", "url(#arrow)");
+        connections.appendChild(path);
+      });
+    }
+
+    const ro = new ResizeObserver(() => drawConnections());
+    ro.observe(flowchart);
+    window.addEventListener("resize", drawConnections);
+    window.addEventListener("load", drawConnections);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(drawConnections);
+    }
+  </script>
+</body>
+</html>
