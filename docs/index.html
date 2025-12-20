@@ -742,6 +742,21 @@
               This approach provides both optimality and reactivity, allowing the controller to adapt to changing conditions and perception updates 
               in real time.
             </p>
+
+            <h4>Simulation: Parameter Tuning (Q, R, P Weights)</h4>
+            <p class="muted">
+              In simulation, we optimized the cost function weights to achieve desired trajectory behavior. The tuning process involved 
+              adjusting the <code>Q</code> (state penalty), <code>R</code> (control effort penalty), and <code>P</code> (terminal cost) matrices 
+              to balance tracking accuracy, smoothness, and control authority:
+            </p>
+            <div class="math-block">
+              <img src="./assets/img/slides/slide_20.png" alt="Simulation optimization showing Q, R, P weight tuning effects on trajectories" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+            </div>
+            <p class="muted small">
+              The plots show how different Q weight configurations affect the trajectory shape, position tracking, and orientation dynamics. 
+              Higher position penalties in Q result in straighter, more direct paths, while lower penalties allow smoother, more natural maneuvers. 
+              These parameters were further adjusted for hardware deployment to account for SDK-level control constraints.
+            </p>
           </div>
         </div>
 
