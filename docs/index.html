@@ -646,6 +646,105 @@
           </div>
         </div>
 
+        <!-- Dynamics and Control Section -->
+        <div class="two-col" style="margin-top: 48px;">
+          <div class="stack">
+            <h3>Quadrotor Dynamics Model</h3>
+            <p class="muted">
+              The quadrotor dynamics were derived from first principles, modeling forces and torques acting on the rigid body:
+            </p>
+            
+            <h4>Forces</h4>
+            <p class="muted">The translational acceleration is governed by:</p>
+            <div class="math-block">
+              <img src="./assets/img/slides/slide_06.png" alt="Dynamics forces equation" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+            </div>
+            <p class="muted small">
+              Where the total thrust force <code>f<sub>total</sub></code> acts in the body frame and gravity acts downward in the world frame. 
+              The rotation matrix <code>R<sub>ab</sub>(φ, θ, ψ)</code> transforms body forces to the world frame.
+            </p>
+
+            <h4>Linearization</h4>
+            <p class="muted">
+              For control design, we linearized the model around hover by applying <strong>small angle approximations</strong>:
+            </p>
+            <div class="math-block">
+              <img src="./assets/img/slides/slide_07.png" alt="Linearization with small angle approximations" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+            </div>
+            <div class="math-block">
+              <img src="./assets/img/slides/slide_08.png" alt="Angular dynamics linearization" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+            </div>
+            <p class="muted small">
+              This simplifies the rotation matrix to a first-order approximation and decouples translational motion from rotational dynamics 
+              at small attitudes.
+            </p>
+
+            <h4>Angular Dynamics</h4>
+            <p class="muted">
+              Continuing the linearization process, we apply additional small angle approximations to the body rate transformations:
+            </p>
+            <div class="math-block">
+              <img src="./assets/img/slides/slide_09.png" alt="More small angle approximations for angular rates" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+            </div>
+            <p class="muted small">
+              The angular acceleration depends on applied torques and the quadrotor's moments of inertia. By assuming small angles, 
+              the complex nonlinear coupling terms simplify to a linear relationship between angular rates and applied torques, 
+              making the system tractable for real-time optimal control.
+            </p>
+            <p class="muted small">
+              This further simplifies the kinematic relationships between body-frame angular velocities (p, q, r) and the Euler angle rates (φ̇, θ̇, ψ̇), 
+              reducing the transformation to an identity-like mapping. This allows us to directly integrate angular accelerations into Euler angle dynamics 
+              in the final state-space representation.
+            </p>
+
+            <h4>Fully Linearized State-Space Model</h4>
+            <p class="muted">
+              The complete linearized system takes the form <code>ẋ = Ax + Bu</code> with 12 states 
+              (position, orientation, and their derivatives) and 4 control inputs (total thrust and three torques):
+            </p>
+            <div class="math-block">
+              <img src="./assets/img/slides/slide_10.png" alt="Fully linearized model" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+            </div>
+          </div>
+
+          <div class="stack">
+            <h3>Mixer Matrix</h3>
+            <p class="muted">
+              In simulation, individual propeller thrusts are mapped to total thrust and body torques using a <strong>mixer matrix</strong>:
+            </p>
+            <div class="math-block">
+              <img src="./assets/img/slides/slide_11.png" alt="Mixer matrix equations" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+            </div>
+            <p class="muted small">
+              This allows the controller to compute desired forces and torques, which are then inverted to find individual motor commands. 
+              On hardware, this low-level control is replaced by SDK position commands.
+            </p>
+
+            <h3>Receding-Horizon LQR Optimization</h3>
+            <p class="muted">
+              The Model Predictive Controller solves a finite-horizon optimal control problem at each time step:
+            </p>
+            <div class="math-block">
+              <img src="./assets/img/slides/slide_12.png" alt="LQR optimization problem" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+            </div>
+            <p class="muted">
+              <strong>Key components:</strong>
+            </p>
+            <ul class="muted">
+              <li><strong>Cost function:</strong> Penalizes state deviations (via <code>Q</code>) and control effort (via <code>R</code>), 
+                with a terminal cost <code>P</code></li>
+              <li><strong>Constraints:</strong> System dynamics <code>x<sub>k+1</sub> = Ax<sub>k</sub> + Bu<sub>k</sub></code></li>
+              <li><strong>Control limits:</strong> <code>u<sub>min</sub> ≤ u<sub>k</sub> ≤ u<sub>max</sub></code> to respect actuator saturation</li>
+              <li><strong>Receding horizon:</strong> Only the first control action is applied; the optimization is re-solved at the next time step 
+                with updated measurements</li>
+            </ul>
+            <p class="muted small">
+              This approach provides both optimality and reactivity, allowing the controller to adapt to changing conditions and perception updates 
+              in real time.
+            </p>
+          </div>
+        </div>
+
       </div>
     </section>
 
