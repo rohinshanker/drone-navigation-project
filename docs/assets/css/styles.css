@@ -212,6 +212,10 @@ img{ max-width: 100%; display: block; }
   margin: 0;
   color: var(--muted);
 }
+.section-subtitle{
+  margin: 0;
+  color: var(--muted);
+}
 
 /* Section header style options for comparison */
 .section-header.style-a h2{

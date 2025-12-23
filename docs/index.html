@@ -649,7 +649,7 @@
                 <!-- Dynamics and Control Section -->
         <div class="stack" style="margin-top: 48px;">
           <h3 class="dynamics-title">Quadrotor Dynamics Model</h3>
-          <p class="muted subtitle-line">
+          <p class="section-subtitle">
             The quadrotor dynamics were derived from first principles, modeling forces and torques acting on the rigid body.
           </p>
 
@@ -818,13 +818,13 @@
               </defs>
             </svg>
             <div class="nodes" id="nodes">
-              <button class="node" data-step="1"><strong>1. Takeoff</strong><span>Init</span></button>
-              <button class="node" data-step="2"><strong>2. Checkpoint 1</strong><span>Obstacle 1</span></button>
-              <button class="node" data-step="3"><strong>3. Planning</strong><span>MPC / LQR</span></button>
-              <button class="node" data-step="4"><strong>4. Execution</strong><span>Commands</span></button>
-              <button class="node" data-step="5"><strong>5. Completion</strong><span>Checkpoint</span></button>
-              <button class="node" data-step="6"><strong>6. Repeat</strong><span>Cycle</span></button>
-              <button class="node" data-step="7"><strong>7. Landing</strong><span>Final</span></button>
+              <button class="node" id="step-1" data-step="1"><strong>1. Takeoff</strong><span>Init</span></button>
+              <button class="node" id="step-2" data-step="2"><strong>2. Checkpoint 1</strong><span>Obstacle 1</span></button>
+              <button class="node" id="step-3" data-step="3"><strong>3. Planning</strong><span>MPC / LQR</span></button>
+              <button class="node" id="step-4" data-step="4"><strong>4. Execution</strong><span>Commands</span></button>
+              <button class="node" id="step-5" data-step="5"><strong>5. Completion</strong><span>Checkpoint</span></button>
+              <button class="node" id="step-6" data-step="6"><strong>6. Repeat</strong><span>Cycle</span></button>
+              <button class="node" id="step-7" data-step="7"><strong>7. Landing</strong><span>Final</span></button>
             </div>
             <div class="popup" id="popup" role="tooltip" aria-hidden="true"></div>
           </div>
@@ -1145,6 +1145,24 @@
       };
     }
 
+    function topCenter(node){
+      const rect = node.getBoundingClientRect();
+      const containerRect = flowchart.getBoundingClientRect();
+      return {
+        x: (rect.left + rect.right) / 2 - containerRect.left,
+        y: rect.top - containerRect.top
+      };
+    }
+
+    function bottomCenter(node){
+      const rect = node.getBoundingClientRect();
+      const containerRect = flowchart.getBoundingClientRect();
+      return {
+        x: (rect.left + rect.right) / 2 - containerRect.left,
+        y: rect.bottom - containerRect.top
+      };
+    }
+
     function pathBetween(a, b){
       const dx = b.x - a.x;
       const dy = b.y - a.y;
@@ -1155,35 +1173,58 @@
       return `M ${a.x} ${a.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${b.x} ${b.y}`;
     }
 
+    function loopPath(fromEl, toEl){
+      const s = topCenter(fromEl);
+      const e = topCenter(toEl);
+      const arc = Math.min(160, Math.max(90, Math.abs(s.x - e.x) * 0.35));
+      const y = Math.min(s.y, e.y) - arc;
+      return `M ${s.x} ${s.y}
+        C ${s.x} ${y},
+          ${e.x} ${y},
+          ${e.x} ${e.y}`;
+    }
+
+    function branchPath(fromEl, toEl){
+      const s = bottomCenter(fromEl);
+      const e = topCenter(toEl);
+      const midY = (s.y + e.y) / 2;
+      return `M ${s.x} ${s.y}
+        C ${s.x} ${midY},
+          ${e.x} ${midY},
+          ${e.x} ${e.y}`;
+    }
+
     function drawConnections(){
       const containerRect = flowchart.getBoundingClientRect();
       connections.setAttribute("viewBox", `0 0 ${containerRect.width} ${containerRect.height}`);
       connections.innerHTML = '<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,255,255,0.45)" /></marker></defs>';
 
-      const get = (id) => nodeCenter(nodes[id - 1]);
-      const step1 = get(1);
-      const step2 = get(2);
-      const step3 = get(3);
-      const step4 = get(4);
-      const step5 = get(5);
-      const step6 = get(6);
-      const step7 = get(7);
+      const edges = [
+        { from: "step-1", to: "step-2", kind: "linear" },
+        { from: "step-2", to: "step-3", kind: "linear" },
+        { from: "step-3", to: "step-4", kind: "linear" },
+        { from: "step-4", to: "step-5", kind: "linear" },
+        { from: "step-5", to: "step-6", kind: "linear" },
+        { from: "step-6", to: "step-2", kind: "loop" },
+        { from: "step-6", to: "step-7", kind: "branch" }
+      ];
 
-      const paths = [];
-      paths.push(pathBetween({ x: step1.right, y: step1.y }, { x: step2.left, y: step2.y }));
-      paths.push(pathBetween({ x: step2.right, y: step2.y }, { x: step3.left, y: step3.y }));
-      paths.push(pathBetween({ x: step3.right, y: step3.y }, { x: step4.left, y: step4.y }));
-      paths.push(pathBetween({ x: step4.right, y: step4.y }, { x: step5.left, y: step5.y }));
-      paths.push(pathBetween({ x: step5.right, y: step5.y }, { x: step6.left, y: step6.y }));
-      paths.push(pathBetween({ x: step6.x, y: step6.bottom }, { x: step7.x, y: step7.top }));
-
-      const loopStart = { x: step6.right, y: step6.y };
-      const loopEnd = { x: step2.top + step2.width / 2, y: step2.top - 10 };
-      const loopPath = `M ${loopStart.x} ${loopStart.y}
-        C ${loopStart.x + 120} ${loopStart.y - 80}, ${loopEnd.x + 120} ${loopEnd.y - 80}, ${loopEnd.x} ${loopEnd.y}`;
-      paths.push(loopPath);
-
-      paths.forEach((d) => {
+      edges.forEach((edge) => {
+        const fromEl = document.getElementById(edge.from);
+        const toEl = document.getElementById(edge.to);
+        if (!fromEl || !toEl) return;
+        let d = "";
+        if (edge.kind === "loop") {
+          d = loopPath(fromEl, toEl);
+        } else if (edge.kind === "branch") {
+          d = branchPath(fromEl, toEl);
+        } else {
+          const a = nodeCenter(fromEl);
+          const b = nodeCenter(toEl);
+          const start = { x: a.right, y: a.y };
+          const end = { x: b.left, y: b.y };
+          d = pathBetween(start, end);
+        }
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", d);
         path.setAttribute("marker-end", "url(#arrow)");
