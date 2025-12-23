@@ -389,6 +389,20 @@ img{ max-width: 100%; display: block; }
   margin-bottom: 0;
 }
 
+.math-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 900px){
+  .math-grid{ grid-template-columns: 1fr; }
+}
+.dyn-img{
+  width: 88%;
+  margin: 0 auto;
+  display: block;
+}
+
 .tab-card{
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -430,7 +444,7 @@ img{ max-width: 100%; display: block; }
   border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
   background: color-mix(in srgb, var(--accent) 10%, transparent);
 }
-.tab-list button[aria-selected=\"true\"]{
+.tab-list button[aria-selected="true"]{
   background: #0a66c2;
   color: #fff;
   border-color: #0a66c2;

@@ -646,117 +646,152 @@
           </div>
         </div>
 
-        <!-- Dynamics and Control Section -->
-        <div class="two-col" style="margin-top: 48px;">
-          <div class="stack">
-            <h3>Quadrotor Dynamics Model</h3>
-            <p class="muted">
-              The quadrotor dynamics were derived from first principles, modeling forces and torques acting on the rigid body:
-            </p>
-            
-            <h4>Forces</h4>
-            <p class="muted">The translational acceleration is governed by:</p>
-            <div class="math-block">
-              <img src="./assets/img/slides/slide_06.png" alt="Dynamics forces equation" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
-            </div>
-            <p class="muted small">
-              Where the total thrust force <code>f<sub>total</sub></code> acts in the body frame and gravity acts downward in the world frame. 
-              The rotation matrix <code>R<sub>ab</sub>(φ, θ, ψ)</code> transforms body forces to the world frame.
-            </p>
+                <!-- Dynamics and Control Section -->
+        <div class="stack" style="margin-top: 48px;">
+          <h3 class="dynamics-title">Quadrotor Dynamics Model</h3>
+          <p class="muted subtitle-line">
+            The quadrotor dynamics were derived from first principles, modeling forces and torques acting on the rigid body.
+          </p>
 
-            <h4>Linearization</h4>
-            <p class="muted">
-              For control design, we linearized the model around hover by applying <strong>small angle approximations</strong>:
-            </p>
-            <div class="math-block">
-              <img src="./assets/img/slides/slide_07.png" alt="Linearization with small angle approximations" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+          <div class="tab-card arrow-tabs" style="margin-top: 12px;">
+            <div class="tab-list" role="tablist" aria-label="Quadrotor dynamics tabs">
+              <button type="button" role="tab" aria-selected="true" data-tab="dyn-forces">Forces</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="dyn-linear">Linearization</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="dyn-angular">Angular Dynamics</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="dyn-linearized">Fully Linearized Model</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="dyn-mixer">Mixer Matrix</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="dyn-lqr">LQR Optimization</button>
+              <button type="button" role="tab" aria-selected="false" data-tab="dyn-tuning">Simulation Parameter Tuning</button>
             </div>
-            <div class="math-block">
-              <img src="./assets/img/slides/slide_08.png" alt="Angular dynamics linearization" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
-            </div>
-            <p class="muted small">
-              This simplifies the rotation matrix to a first-order approximation and decouples translational motion from rotational dynamics 
-              at small attitudes.
-            </p>
+            <div class="tab-panel active" id="tab-dyn-forces" role="tabpanel">
 
-            <h4>Angular Dynamics</h4>
-            <p class="muted">
-              Continuing the linearization process, we apply additional small angle approximations to the body rate transformations:
-            </p>
-            <div class="math-block">
-              <img src="./assets/img/slides/slide_09.png" alt="More small angle approximations for angular rates" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+              <div class="two-col">
+                <div class="math-block">
+                  <img class="dyn-img" src="./assets/img/slides/slide_06.png" alt="Dynamics forces equation" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+                </div>
+                <div>
+                  <p class="muted">The translational acceleration is governed by the equation to the left. </p>
+                  <p class="muted">
+                    Where the total thrust force <code>f<sub>total</sub></code> acts in the body frame and gravity acts downward in the world frame.
+                    The rotation matrix <code>R<sub>ab</sub>(φ, θ, ψ)</code> transforms body forces to the world frame.
+                  </p>
+                </div>
+              </div>
             </div>
-            <p class="muted small">
-              The angular acceleration depends on applied torques and the quadrotor's moments of inertia. By assuming small angles, 
-              the complex nonlinear coupling terms simplify to a linear relationship between angular rates and applied torques, 
-              making the system tractable for real-time optimal control.
-            </p>
-            <p class="muted small">
-              This further simplifies the kinematic relationships between body-frame angular velocities (p, q, r) and the Euler angle rates (φ̇, θ̇, ψ̇), 
-              reducing the transformation to an identity-like mapping. This allows us to directly integrate angular accelerations into Euler angle dynamics 
-              in the final state-space representation.
-            </p>
+            <div class="tab-panel" id="tab-dyn-linear" role="tabpanel">
 
-            <h4>Fully Linearized State-Space Model</h4>
-            <p class="muted">
-              The complete linearized system takes the form <code>ẋ = Ax + Bu</code> with 12 states 
-              (position, orientation, and their derivatives) and 4 control inputs (total thrust and three torques):
-            </p>
-            <div class="math-block">
-              <img src="./assets/img/slides/slide_10.png" alt="Fully linearized model" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+              <div class="two-col">
+                <div class="stack">
+                  <div class="math-block">
+                    <img class="dyn-img" src="./assets/img/slides/slide_07.png" alt="Linearization with small angle approximations" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+                  </div>
+                  <div class="math-block">
+                    <img class="dyn-img" src="./assets/img/slides/slide_08.png" alt="Angular dynamics linearization" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+                  </div>
+                </div>
+                <div>
+                  <p class="muted">For control design, we linearized the model around hover by applying <strong>small angle approximations</strong>:</p>
+                  <p class="muted">
+                    This simplifies the rotation matrix to a first-order approximation and decouples translational motion from rotational dynamics
+                    at small attitudes.
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
+            <div class="tab-panel" id="tab-dyn-angular" role="tabpanel">
 
-          <div class="stack">
-            <h3>Mixer Matrix</h3>
-            <p class="muted">
-              In simulation, individual propeller thrusts are mapped to total thrust and body torques using a <strong>mixer matrix</strong>:
-            </p>
-            <div class="math-block">
-              <img src="./assets/img/slides/slide_11.png" alt="Mixer matrix equations" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+              <div class="two-col">
+                <div class="math-block">
+                  <img class="dyn-img" src="./assets/img/slides/slide_09.png" alt="More small angle approximations for angular rates" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+                </div>
+                <div>
+                  <p class="muted">Continuing the linearization process, we apply additional small angle approximations to the body rate transformations:</p>
+                  <p class="muted small">
+                    The angular acceleration depends on applied torques and the quadrotor's moments of inertia. By assuming small angles,
+                    the complex nonlinear coupling terms simplify to a linear relationship between angular rates and applied torques,
+                    making the system tractable for real-time optimal control.
+                  </p>
+                  <p class="muted small">
+                    This further simplifies the kinematic relationships between body-frame angular velocities (p, q, r) and the Euler angle rates (φ̇, θ̇, ψ̇),
+                    reducing the transformation to an identity-like mapping. This allows us to directly integrate angular accelerations into Euler angle dynamics
+                    in the final state-space representation.
+                  </p>
+                </div>
+              </div>
             </div>
-            <p class="muted small">
-              This allows the controller to compute desired forces and torques, which are then inverted to find individual motor commands. 
-              On hardware, this low-level control is replaced by SDK position commands.
-            </p>
+            <div class="tab-panel" id="tab-dyn-linearized" role="tabpanel">
 
-            <h3>Receding-Horizon LQR Optimization</h3>
-            <p class="muted">
-              The Model Predictive Controller solves a finite-horizon optimal control problem at each time step:
-            </p>
-            <div class="math-block">
-              <img src="./assets/img/slides/slide_12.png" alt="LQR optimization problem" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+              <div class="two-col">
+                <div class="math-block">
+                  <img class="dyn-img" src="./assets/img/slides/slide_10.png" alt="Fully linearized model" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+                </div>
+                <div>
+                  <p class="muted">
+                    The complete linearized system takes the form <code>ẋ = Ax + Bu</code> with 12 states
+                    (position, orientation, and their derivatives) and 4 control inputs (total thrust and three torques).
+                  </p>
+                </div>
+              </div>
             </div>
-            <p class="muted">
-              <strong>Key components:</strong>
-            </p>
-            <ul class="muted">
-              <li><strong>Cost function:</strong> Penalizes state deviations (via <code>Q</code>) and control effort (via <code>R</code>), 
-                with a terminal cost <code>P</code></li>
-              <li><strong>Constraints:</strong> System dynamics <code>x<sub>k+1</sub> = Ax<sub>k</sub> + Bu<sub>k</sub></code></li>
-              <li><strong>Control limits:</strong> <code>u<sub>min</sub> ≤ u<sub>k</sub> ≤ u<sub>max</sub></code> to respect actuator saturation</li>
-              <li><strong>Receding horizon:</strong> Only the first control action is applied; the optimization is re-solved at the next time step 
-                with updated measurements</li>
-            </ul>
-            <p class="muted small">
-              This approach provides both optimality and reactivity, allowing the controller to adapt to changing conditions and perception updates 
-              in real time.
-            </p>
+            <div class="tab-panel" id="tab-dyn-mixer" role="tabpanel">
 
-            <h4>Simulation: Parameter Tuning (Q, R, P Weights)</h4>
-            <p class="muted">
-              In simulation, we optimized the cost function weights to achieve desired trajectory behavior. The tuning process involved 
-              adjusting the <code>Q</code> (state penalty), <code>R</code> (control effort penalty), and <code>P</code> (terminal cost) matrices 
-              to balance tracking accuracy, smoothness, and control authority:
-            </p>
-            <div class="math-block">
-              <img src="./assets/img/slides/slide_20.png" alt="Simulation optimization showing Q, R, P weight tuning effects on trajectories" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+              <div class="two-col">
+                <div class="math-block">
+                  <img class="dyn-img" src="./assets/img/slides/slide_11.png" alt="Mixer matrix equations" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+                </div>
+                <div>
+                  <p class="muted">
+                    In simulation, individual propeller thrusts are mapped to total thrust and body torques using a <strong>mixer matrix</strong>.
+                  </p>
+                  <p class="muted">
+                    This allows the controller to compute desired forces and torques, which are then inverted to find individual motor commands.
+                    On hardware, this low-level control is replaced by SDK position commands.
+                  </p>
+                </div>
+              </div>
             </div>
-            <p class="muted small">
-              The plots show how different Q weight configurations affect the trajectory shape, position tracking, and orientation dynamics. 
-              Higher position penalties in Q result in straighter, more direct paths, while lower penalties allow smoother, more natural maneuvers. 
-              These parameters were further adjusted for hardware deployment to account for SDK-level control constraints.
-            </p>
+            <div class="tab-panel" id="tab-dyn-lqr" role="tabpanel">
+
+              <div class="two-col">
+                <div class="math-block">
+                  <img class="dyn-img" src="./assets/img/slides/slide_12.png" alt="LQR optimization problem" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+                </div>
+                <div>
+                  <p class="muted">The Model Predictive Controller solves a finite-horizon optimal control problem at each time step:</p>
+                  <p class="muted"><strong>Key components:</strong></p>
+                  <ul class="muted">
+                    <li><strong>Cost function:</strong> Penalizes state deviations (via <code>Q</code>) and control effort (via <code>R</code>), with a terminal cost <code>P</code></li>
+                    <li><strong>Constraints:</strong> System dynamics <code>x<sub>k+1</sub> = Ax<sub>k</sub> + Bu<sub>k</sub></code></li>
+                    <li><strong>Control limits:</strong> <code>u<sub>min</sub> ≤ u<sub>k</sub> ≤ u<sub>max</sub></code> to respect actuator saturation</li>
+                    <li><strong>Receding horizon:</strong> Only the first control action is applied; the optimization is re-solved at the next time step with updated measurements</li>
+                  </ul>
+                  <p class="muted small">
+                    This approach provides both optimality and reactivity, allowing the controller to adapt to changing conditions and perception updates
+                    in real time.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="tab-panel" id="tab-dyn-tuning" role="tabpanel">
+
+              <div class="two-col">
+                <div class="math-block">
+                  <img class="dyn-img" src="./assets/img/slides/slide_20.png" alt="Simulation optimization showing Q, R, P weight tuning effects on trajectories" loading="lazy" style="max-width: 100%; border-radius: 8px;" />
+                </div>
+                <div>
+                  <p class="muted">
+                    In simulation, we optimized the cost function weights to achieve desired trajectory behavior. The tuning process involved
+                    adjusting the <code>Q</code> (state penalty), <code>R</code> (control effort penalty), and <code>P</code> (terminal cost) matrices
+                    to balance tracking accuracy, smoothness, and control authority.
+                  </p>
+                  <p class="muted small">
+                    The plots show how different Q weight configurations affect the trajectory shape, position tracking, and orientation dynamics.
+                    Higher position penalties in Q result in straighter, more direct paths, while lower penalties allow smoother, more natural maneuvers.
+                    These parameters were further adjusted for hardware deployment to account for SDK-level control constraints.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
